@@ -10,9 +10,13 @@ interface SlideProps {
   bg?: string;
 }
 
+interface WrapperProps {
+  slideIndex: number;
+}
+
 const Container = styled.div`
   width: 100%;
-  height: 100vh;
+  height: 80vh;
   display: flex;
   position: relative;
   overflow: hidden;
@@ -37,9 +41,11 @@ const Arrow = styled.div<ArrowProps>`
   z-index: 2;
 `;
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<WrapperProps>`
   height: 100%;
   display: flex;
+  transition: all 1.5s ease;
+  transform: translateX(${(props) => props.slideIndex * -100}vw);
 `;
 
 const Slide = styled.div<SlideProps>`
@@ -65,6 +71,7 @@ const InfoContainer = styled.div`
 const Title = styled.h1`
   font-size: 70px;
 `;
+
 const Desc = styled.p`
   margin: 50px 0px;
   font-size: 20px;
@@ -80,15 +87,21 @@ const Button = styled.button`
 
 const Slider = () => {
   const [slideIndex, setSlideIndex] = useState<number>(0);
-  const handleClick = (direction: string) => {};
+  const handleClick = (direction: string) => {
+    if (direction === "left") {
+      setSlideIndex(slideIndex > 0 ? slideIndex - 1 : 2);
+    } else {
+      setSlideIndex(slideIndex < 2 ? slideIndex + 1 : 0);
+    }
+  };
   return (
     <Container>
       <Arrow direction="left" onClick={() => handleClick("left")}>
         <ArrowLeftOutlined />
       </Arrow>
-      <Wrapper>
+      <Wrapper slideIndex={slideIndex}>
         {sliderItems.map((item) => (
-          <Slide bg={item.bg}>
+          <Slide bg={item.bg} key={item.id}>
             <ImageContainer>
               <Image src={item.img} />
             </ImageContainer>
